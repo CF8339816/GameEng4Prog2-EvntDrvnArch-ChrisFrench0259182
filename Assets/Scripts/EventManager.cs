@@ -1,14 +1,8 @@
 using System;
 using TMPro;
-using Unity.Jobs;
-using Unity.Jobs.LowLevel.Unsafe;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
-using UnityEngine.Android;
+
 
 public class EventManager : MonoBehaviour
 {
@@ -23,13 +17,13 @@ public class EventManager : MonoBehaviour
     public TextMeshProUGUI textItemsCount;
     public TextMeshProUGUI textInfoBox;
 
-
     private int currentItems = 0;
     private int ItemPerLevelCount = 0;
     private int ItemsCount;
     private GameObject currentActiveLevel;
     public int MaxItemPerLevel;
-   private GameObject activeLevel;
+    private GameObject activeLevel;
+
     void Start()
     {
         itemCollection.value = 0;
@@ -43,22 +37,16 @@ public class EventManager : MonoBehaviour
             setItemsPerLevel();
             SetItemsValue();
         }
-
-    
-
-
-
-
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E)) //checks for keypress to simulate item pickup
-        {
-            collectedItems(); //checks if max items reached for game  checks for max per level items for level change
+        {           
             ItemsCount++;//adds 1 to max game count when picked up
             ItemPerLevelCount++;//adds 1 to level count when picked up
-          
+            SetItemsValue();
+            collectedItems(); //checks if max items reached for game  checks for max per level items for level change
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) //checks for keypress to simulate level change manually
@@ -73,10 +61,7 @@ public class EventManager : MonoBehaviour
         {
             ManualLevelChange(levelManager.Level03);
         }
-       
-     
     }
-
 
     private void ManualLevelChange(GameObject targetLevel)//manual  level change   and  reset
     {
@@ -89,6 +74,10 @@ public class EventManager : MonoBehaviour
     public void collectedItems()
     {
         currentItems = ItemsCount;  // sets slider value to collected value
+     
+        itemCollection.value = currentItems;// sets calery slider value to  currentcalories variable
+
+        Debug.Log($"Collected: {currentItems}/{MaxItems}"); //verifies  the item slider addition whenitems are picked up
 
         if (currentItems >= MaxItems)
         {
@@ -96,10 +85,7 @@ public class EventManager : MonoBehaviour
             return; //  hard stop at 40 even though there are more cookies
         } 
 
-        itemCollection.value = currentItems;// sets calery slider value to  currentcalories variable
-
-        Debug.Log($"Collected: {currentItems}/{MaxItems}"); //verifies  the item slider addition whenitems are picked up
-
+       
         if (currentItems < MaxItems)// if items are not at game max checks for  if at level max for level change
         {
             whenMaxPerLevelItems();
@@ -114,6 +100,7 @@ public class EventManager : MonoBehaviour
             levelManager.LoadNextChronologicalLevel();
 
             activeLevel = levelManager.currentActiveLevel;
+            ItemPerLevelCount = 0;
 
             setItemsPerLevel(); // sets  max ipl
 
@@ -129,26 +116,24 @@ public class EventManager : MonoBehaviour
        
         if (activeLevel == levelManager.Level01)
         {
-           // ItemPerLevelCount = 0;
+         
             MaxItemPerLevel = 10;
         }
         else if (activeLevel == levelManager.Level02)
         {
-           // ItemPerLevelCount = 0;
+        
             MaxItemPerLevel = 15;
         }
         else if (activeLevel == levelManager.Level03)
         {
-            //ItemPerLevelCount = 0;
+         
             MaxItemPerLevel = 20;
         }
         
       }
      public void SetItemsValue()  // sets the text output for the stage
      {
-        
         textItemsCount.text = "Item Count: " + ItemPerLevelCount.ToString() + "/" + MaxItemPerLevel.ToString(); // sets count to output to string
-           
      }
 
 }
