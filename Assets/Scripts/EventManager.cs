@@ -10,7 +10,7 @@ using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
 using UnityEngine.Android;
 
-public class ItemCollectionDriver : MonoBehaviour
+public class EventManager : MonoBehaviour
 {
 
     [SerializeField] private TMP_Text itemCountPerLevel;
@@ -64,9 +64,6 @@ public class ItemCollectionDriver : MonoBehaviour
        
         setItemsPerLevel();// sets new max items per level based on the level  loaded
     }
-
-
-
 
     public void collectedItems()
     {
