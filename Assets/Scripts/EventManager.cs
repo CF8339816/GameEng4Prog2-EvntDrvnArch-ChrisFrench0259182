@@ -62,12 +62,13 @@ public class EventManager : MonoBehaviour
             activeLevel = levelManager.Level03;
         }
        
-        setItemsPerLevel();// sets new max items per level based on the level  loaded
+     
     }
 
     public void collectedItems()
     {
-       
+        currentItems = ItemsCount;
+
         if (currentItems >= MaxItems)
         {
             textInfoBox.text = "you have collected all the items Needed  in the game  congrats you win";
@@ -102,15 +103,14 @@ public class EventManager : MonoBehaviour
         {
             MaxItemPerLevel = 10;
         }
-        if (activeLevel == levelManager.Level02)
+        else if (activeLevel == levelManager.Level02)
         {
             MaxItemPerLevel = 15;
         }
-        if (activeLevel == levelManager.Level03)
+        else if (activeLevel == levelManager.Level03)
         {
             MaxItemPerLevel = 20;
         }
-       
         else
         {
             MaxItemPerLevel = 0;
