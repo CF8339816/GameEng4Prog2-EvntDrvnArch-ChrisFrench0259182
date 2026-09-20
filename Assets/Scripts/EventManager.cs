@@ -28,15 +28,27 @@ public class EventManager : MonoBehaviour
     private int ItemPerLevelCount = 0;
     private int ItemsCount;
     private GameObject currentActiveLevel;
-    public int MaxItemPerLevel { get; set; }
+    public int MaxItemPerLevel;
    private GameObject activeLevel;
     void Start()
     {
         itemCollection.value = 0;
         itemCollection.minValue = 0;
         itemCollection.maxValue = 40;
-        activeLevel = levelManager.currentActiveLevel;
-        setItemsPerLevel();
+        ItemPerLevelCount = 0;
+
+        if (levelManager != null)
+        {
+            activeLevel = levelManager.currentActiveLevel;
+            setItemsPerLevel();
+            SetItemsValue();
+        }
+
+    
+
+
+
+
     }
 
     void Update()
@@ -46,28 +58,37 @@ public class EventManager : MonoBehaviour
             collectedItems(); //checks if max items reached for game  checks for max per level items for level change
             ItemsCount++;//adds 1 to max game count when picked up
             ItemPerLevelCount++;//adds 1 to level count when picked up
-            SetItemsValue();
+          
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) //checks for keypress to simulate level change manually
         {
-           activeLevel = levelManager.Level01;
+            ManualLevelChange(levelManager.Level01);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) //checks for keypress to simulate level change manually
         {
-            activeLevel = levelManager.Level02;
+            ManualLevelChange(levelManager.Level02);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) //checks for keypress to simulate level change manually
         {
-            activeLevel = levelManager.Level03;
+            ManualLevelChange(levelManager.Level03);
         }
        
      
     }
 
+
+    private void ManualLevelChange(GameObject targetLevel)//manual  level change   and  reset
+    {
+        activeLevel = targetLevel;
+        ItemPerLevelCount = 0; // Reset level progress on manual skip
+        setItemsPerLevel(); // sets  max ipl
+        SetItemsValue();  // resets level collection counter
+    }
+
     public void collectedItems()
     {
-        currentItems = ItemsCount;
+        currentItems = ItemsCount;  // sets slider value to collected value
 
         if (currentItems >= MaxItems)
         {
@@ -85,44 +106,49 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    private  void whenMaxPerLevelItems() //Triggers stage change
+    public void whenMaxPerLevelItems() //Triggers stage change loads  next level and resets collection and sets max collection
     {
         if (ItemPerLevelCount == MaxItemPerLevel)
         {
-
             textInfoBox.text = "you have collected all the items in this stage!";
-           levelManager.LoadNextChronologicalLevel();
+            levelManager.LoadNextChronologicalLevel();
+
+            activeLevel = levelManager.currentActiveLevel;
+
+            setItemsPerLevel(); // sets  max ipl
+
+            SetItemsValue();  // resets level collection counter
+
         }
-        else return;
+       
     }
+
 
     public void setItemsPerLevel()// sets the max collectable items per level to trrigger stage change
       {
        
         if (activeLevel == levelManager.Level01)
         {
+           // ItemPerLevelCount = 0;
             MaxItemPerLevel = 10;
         }
         else if (activeLevel == levelManager.Level02)
         {
+           // ItemPerLevelCount = 0;
             MaxItemPerLevel = 15;
         }
         else if (activeLevel == levelManager.Level03)
         {
+            //ItemPerLevelCount = 0;
             MaxItemPerLevel = 20;
         }
-        else
-        {
-            MaxItemPerLevel = 0;
-        }
-
-      }
-     void SetItemsValue()  // sets the text output for the stage
-     {
-        textItemsCount.text = "Item Count: " + ItemPerLevelCount.ToString() + "/" + MaxItemPerLevel.ToString(); // sets count to output to string
-
         
-       
+      }
+     public void SetItemsValue()  // sets the text output for the stage
+     {
+        
+        textItemsCount.text = "Item Count: " + ItemPerLevelCount.ToString() + "/" + MaxItemPerLevel.ToString(); // sets count to output to string
+           
      }
 
 }
