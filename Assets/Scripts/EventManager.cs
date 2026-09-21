@@ -18,6 +18,7 @@ public class EventManager : MonoBehaviour
     public TextMeshProUGUI textInfoBox;
 
     private int currentItems = 0;
+   
     private int ItemPerLevelCount = 0;
     private int ItemsCount;
     private GameObject currentActiveLevel;
@@ -30,12 +31,10 @@ public class EventManager : MonoBehaviour
         itemCollection.minValue = 0;
         itemCollection.maxValue = 40;
         ItemPerLevelCount = 0;
-
+ 
         if (levelManager != null)
         {
-            activeLevel = levelManager.currentActiveLevel;
-            setItemsPerLevel();
-            SetItemsValue();
+            OnLevelChange(levelManager.currentActiveLevel);
         }
     }
 
@@ -49,24 +48,23 @@ public class EventManager : MonoBehaviour
             collectedItems(); //checks if max items reached for game  checks for max per level items for level change
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) //checks for keypress to simulate level change manually
+        if (Input.GetKeyDown(KeyCode.Alpha1) && levelManager != null) //checks for keypress to simulate level change manually
         {
-            ManualLevelChange(levelManager.Level01);
+            levelManager.levelChange(levelManager.Level01);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2)) //checks for keypress to simulate level change manually
+        if (Input.GetKeyDown(KeyCode.Alpha2) && levelManager != null) //checks for keypress to simulate level change manually
         {
-            ManualLevelChange(levelManager.Level02);
+            levelManager.levelChange(levelManager.Level02);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3)) //checks for keypress to simulate level change manually
+        if (Input.GetKeyDown(KeyCode.Alpha3) && levelManager != null) //checks for keypress to simulate level change manually
         {
-            ManualLevelChange(levelManager.Level03);
+            levelManager.levelChange(levelManager.Level03);
         }
     }
 
-    private void ManualLevelChange(GameObject targetLevel)//manual  level change   and  reset
+   public void OnLevelChange(GameObject targetLevel)//manual  level change   and  reset
     {
         activeLevel = targetLevel;
-        ItemPerLevelCount = 0; // Reset level progress on manual skip
         setItemsPerLevel(); // sets  max ipl
         SetItemsValue();  // resets level collection counter
     }
@@ -133,6 +131,7 @@ public class EventManager : MonoBehaviour
       }
      public void SetItemsValue()  // sets the text output for the stage
      {
+        
         textItemsCount.text = "Item Count: " + ItemPerLevelCount.ToString() + "/" + MaxItemPerLevel.ToString(); // sets count to output to string
      }
 

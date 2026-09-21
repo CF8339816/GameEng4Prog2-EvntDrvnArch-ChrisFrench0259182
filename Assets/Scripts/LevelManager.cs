@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -17,12 +10,23 @@ public class LevelManager : MonoBehaviour
     public GameObject currentActiveLevel;
    
     public GameObject levelToLoad;
+    private EventManager eventManager;  //added to ensure level manager can find the event manager to tell it when to initalize stages
+   
     
+    public void Awake()//added to ensure level manager runs prior to event manager
+    {
+        currentActiveLevel = Level01;//ensures level 1 initalized before event manager stsart to remove nulling issue causing the missync issue in the level collection  counter
+
+        eventManager = Object.FindFirstObjectByType<EventManager>();// find the event manager
+    }
 
     public void Start()
     {
-        currentActiveLevel = Level01;// sets default starting stage
-        
+        CloseAllScreens();// ensures no other active scenes at start 
+        Level01.SetActive(true); // ensures level  1  initalized
+
+        // currentActiveLevel = Level01;// sets default starting stage
+
     }
     public void CloseAllScreens() //closes all levels
     {
@@ -40,7 +44,12 @@ public class LevelManager : MonoBehaviour
         levelToLoad.SetActive(true);
         currentActiveLevel = levelToLoad;
 
-      
+
+        if (eventManager != null)// tells event manager to load new level 
+        {
+            eventManager.OnLevelChange(currentActiveLevel);
+        }
+
     }
 
     public void LoadNextChronologicalLevel()  //  loads stages in next chronological order
