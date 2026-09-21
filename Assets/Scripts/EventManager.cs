@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Collections;
 
 public class EventManager : MonoBehaviour
 {
@@ -24,6 +24,14 @@ public class EventManager : MonoBehaviour
     private GameObject currentActiveLevel;
     public int MaxItemPerLevel;
     private GameObject activeLevel;
+    private IEnumerator ClearTextBoxAfterDelay(float delay) //setting up diisplay timer for info box messages
+    {
+        yield return new WaitForSeconds(delay);  // allows for time delay set in seconds
+            
+        textInfoBox.text = ""; //Sets cleared message
+    }
+    
+    private Coroutine activeTextTimer; //defines timer coroutine
 
     void Start()
     {
@@ -62,7 +70,20 @@ public class EventManager : MonoBehaviour
         }
     }
 
-   public void OnLevelChange(GameObject targetLevel)//manual  level change   and  reset
+    public void DisplayInfoMessage(string message)// formats info box messages to utalize display clear timer instead of being on screen dynamically
+    {
+        
+        textInfoBox.text = message; //defines new message variavle name
+               
+        if (activeTextTimer != null) // stops any currently running timer  upon new one started
+        {
+            StopCoroutine(activeTextTimer);
+        }
+                
+        activeTextTimer = StartCoroutine(ClearTextBoxAfterDelay(4f)); //starts newly defined timer (currently 4 sec)
+    }
+
+    public void OnLevelChange(GameObject targetLevel)//manual  level change   and  reset
     {
         activeLevel = targetLevel;
         setItemsPerLevel(); // sets  max ipl
@@ -79,7 +100,7 @@ public class EventManager : MonoBehaviour
 
         if (currentItems >= MaxItems)
         {
-            textInfoBox.text = "you have collected all the items Needed  in the game  congrats you win";
+            DisplayInfoMessage("you have collected all the items Needed  in the game  congrats you win");
             return; //  hard stop at 40 even though there are more cookies
         } 
 
@@ -94,18 +115,19 @@ public class EventManager : MonoBehaviour
     {
         if (ItemPerLevelCount == MaxItemPerLevel)
         {
-            textInfoBox.text = "you have collected all the items in this stage!";
+            //DisplayInfoMessage("you have collected all the items on that stage! Let's Collect more here!");
             levelManager.LoadNextChronologicalLevel();
 
             activeLevel = levelManager.currentActiveLevel;
             ItemPerLevelCount = 0;
-
+           
             setItemsPerLevel(); // sets  max ipl
 
             SetItemsValue();  // resets level collection counter
 
+
         }
-       
+      
     }
 
 
@@ -114,17 +136,17 @@ public class EventManager : MonoBehaviour
        
         if (activeLevel == levelManager.Level01)
         {
-         
+            DisplayInfoMessage(" Let's Collect items here!");
             MaxItemPerLevel = 10;
         }
         else if (activeLevel == levelManager.Level02)
         {
-        
+            DisplayInfoMessage("you have collected all the items on that stage! Let's Collect more here!");
             MaxItemPerLevel = 15;
         }
         else if (activeLevel == levelManager.Level03)
         {
-         
+            DisplayInfoMessage("you have collected all the items on that stage! Let's Collect more here!");
             MaxItemPerLevel = 20;
         }
         
